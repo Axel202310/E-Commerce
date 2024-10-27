@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         id="WebApp_ID" version="3.1">
+    
+    <display-name>t1semana06</display-name>
+
+    <!-- Configuración para manejar multipart-formdata en JSP -->
+    <servlet>
+        <servlet-name>editarProducto</servlet-name>
+        <jsp-file>/editarProducto.jsp</jsp-file>
+        <multipart-config>
+            <!-- Tamaño máximo de archivo permitido (10MB) -->
+            <max-file-size>10485760</max-file-size>
+            <!-- Tamaño máximo de la solicitud completa (20MB) -->
+            <max-request-size>20971520</max-request-size>
+            <!-- Umbral de tamaño del archivo para almacenar en disco (1MB) -->
+            <file-size-threshold>1048576</file-size-threshold>
+        </multipart-config>
+    </servlet>
+
+    <!-- Mapeo del servlet -->
+    <servlet-mapping>
+        <servlet-name>editarProducto</servlet-name>
+        <url-pattern>/editarProducto.jsp</url-pattern>
+    </servlet-mapping>
+    
+    
+    <!-- Configuración para manejar multipart-formdata en JSP (crearProducto.jsp) -->
+    <servlet>
+        <servlet-name>crearProducto</servlet-name>
+        <jsp-file>/crearProducto.jsp</jsp-file>
+        <multipart-config>
+            <!-- Tamaño máximo de archivo permitido (10MB) -->
+            <max-file-size>10485760</max-file-size>
+            <!-- Tamaño máximo de la solicitud completa (20MB) -->
+            <max-request-size>20971520</max-request-size>
+            <!-- Umbral de tamaño del archivo para almacenar en disco (1MB) -->
+            <file-size-threshold>1048576</file-size-threshold>
+        </multipart-config>
+    </servlet>
+
+    <!-- Mapeo del servlet (crearProducto.jsp) -->
+    <servlet-mapping>
+        <servlet-name>crearProducto</servlet-name>
+        <url-pattern>/crearProducto.jsp</url-pattern>
+    </servlet-mapping>
+    
+
+    <!-- Páginas de inicio -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>index.htm</welcome-file>
+        <welcome-file>default.html</welcome-file>
+        <welcome-file>default.jsp</welcome-file>
+        <welcome-file>default.htm</welcome-file>
+    </welcome-file-list>
+</web-app>
