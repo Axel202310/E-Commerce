@@ -268,8 +268,7 @@
     <!-- Mensaje de alerta -->
     <p style="color: black; margin: 0; font-size: 12px;">No hay productos en el carrito.</p>
 </div>
-        
-        
+   
     </div>
     
 <!-- CARRUSEL -->

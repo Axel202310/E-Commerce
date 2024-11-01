@@ -346,7 +346,7 @@
                     tablaProductos += "<td><img src='img/" + Obj.getImagen() + "' width='100' height='100' alt='Producto'></td>";
                     tablaProductos += "<td style='text-align: left; vertical-align: middle;'><span style='font-weight: bold;font-size: 12px;'>" + Obj.getMarca() + "</span><br><span style='font-size: 17px;'>" + Obj.getDescripcion() + "</span></td>";
                     tablaProductos += "<td style='text-align: left; vertical-align: middle; font-size: 17px;'> S/" + String.format("%.2f", Precio) + "</td>";
-                    tablaProductos += "<td style='text-align: left; vertical-align: middle; font-size: 17px;'><input type='number' name='nuevoStock_" + Obj.getIdProducto() + "' value='" + Cantidad + "' min='1' max='" + maxAgregar + "' style='border: none;outline: none;' oninput='actualizarSubtotal(\"" + Obj.getIdProducto() + "\", this.value, " + Precio + ")'></td>";
+                    tablaProductos += "<td style='text-align: left; vertical-align: middle; font-size: 17px;'><input type='number' name='nuevoStock_" + Obj.getIdProducto() + "' value='" + Cantidad + "' min='1' max='" + maxAgregar + "' style='border: none; outline: none;' oninput='actualizarSubtotal(\"" + Obj.getIdProducto() + "\", this.value, " + Precio + "); actualizarCarrito(\"" + Obj.getIdProducto() + "\", this.value)'></td>";
 
                     // Aquí se ajusta el formato a dos decimales
                     tablaProductos += "<td style='text-align: left; vertical-align: middle; font-size: 17px;' id='subtotal_" + Obj.getIdProducto() + "'>S/" + String.format("%.2f", SubTotal) + "</td>";
@@ -561,23 +561,52 @@
 	function actualizarSubtotal(idProducto, cantidad, precio) {
 	    var nuevoSubtotal = cantidad * precio;
 	    document.getElementById('subtotal_' + idProducto).innerText = 'S/' + nuevoSubtotal.toFixed(2);
-	    actualizarTotal(); // Llama a la función para actualizar el total después de actualizar el subtotal
+	    actualizarTotal();
+	    actualizarContador(); // Actualizar el contador de productos
 	}
-	
+
 	function actualizarTotal() {
 	    var total = 0;
-	    // Supongamos que tienes un elemento HTML con la clase 'subtotal' para cada subtotal
-	    var subtotales = document.querySelectorAll('[id^="subtotal_"]'); // Selecciona todos los elementos con id que comienzan con 'subtotal_'
-	
+	    var subtotales = document.querySelectorAll('[id^="subtotal_"]');
 	    subtotales.forEach(function(subtotal) {
-	        // Extrae el valor numérico del subtotal, quitando la parte de 'S/'
 	        var valorSubtotal = parseFloat(subtotal.innerText.replace('S/', '').trim());
-	        total += valorSubtotal; // Suma cada subtotal al total
+	        total += valorSubtotal;
 	    });
-	
-	    // Actualiza el total en el elemento correspondiente
 	    document.getElementById('totalTotal').innerText = 'S/' + total.toFixed(2);
 	}
+
+	function actualizarContador() {
+	    var totalCantidadProductos = 0;
+	    var inputsCantidad = document.querySelectorAll('input[name^="nuevoStock_"]');
+	    inputsCantidad.forEach(function(input) {
+	        totalCantidadProductos += parseInt(input.value, 10);
+	    });
+	    document.querySelector('.fas.fa-shopping-cart + span').innerText = '(' + totalCantidadProductos + ')';
+	}
+	
+	function actualizarCarrito(idProducto, nuevaCantidad) {
+	    // Crear un formulario temporal para enviar la solicitud
+	    var form = document.createElement('form');
+	    form.method = 'POST';
+	    form.action = 'actualizarCarrito.jsp';
+
+	    var inputId = document.createElement('input');
+	    inputId.type = 'hidden';
+	    inputId.name = 'productoId';
+	    inputId.value = idProducto;
+	    form.appendChild(inputId);
+
+	    var inputCantidad = document.createElement('input');
+	    inputCantidad.type = 'hidden';
+	    inputCantidad.name = 'nuevaCantidad';
+	    inputCantidad.value = nuevaCantidad;
+	    form.appendChild(inputCantidad);
+
+	    document.body.appendChild(form);
+	    form.submit();
+	}
+
+
 	</script>
 
 </body>

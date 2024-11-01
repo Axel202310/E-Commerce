@@ -24,8 +24,6 @@
     // Recorrer los parámetros enviados por el formulario
     Enumeration<String> parametros = request.getParameterNames();
 
-    // Vamos a usar un bucle separado para construir un mapa de las cantidades a actualizar.
-    // Esto evita que haya un conflicto de actualización.
     while (parametros.hasMoreElements()) {
         String nombreParametro = parametros.nextElement();
         
@@ -59,12 +57,18 @@
         }
     }
 
-    // Actualizar la sesión con la nueva lista
+    // Calcular la cantidad total de productos en el carrito
+    int totalCantidadProductos = 0;
+    for (carrito item : Lista) {
+        totalCantidadProductos += item.getCantidad();
+    }
+
+    // Actualizar la sesión con la nueva lista y el total de productos
     sesion.setAttribute("cesto", Lista);
+    sesion.setAttribute("numarticulos", totalCantidadProductos); // Actualiza la cantidad total en la sesión
 
     // Redirigir de vuelta al carrito
     response.sendRedirect("carrito.jsp");
 %>
 </body>
 </html>
-
