@@ -1,4 +1,4 @@
-%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@ page session="true" %>
 <%@ page import="modelo.*" %>
 <%@ page import="controller.CarritoBD" %>
@@ -215,6 +215,38 @@
         .search-button i {
             font-size: 18px;
         }
+        
+         /* Estilos de los Botones de Cantidad */
+        .quantity-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .quantity-input {
+            text-align: center;
+            border: none;
+            width: 50px;
+            font-size: 16px;
+            outline: none;
+        }
+        .quantity-button {
+            background-color: #f0ad4e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 30px;
+            height: 30px;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .quantity-button:disabled {
+            background-color: #d3d3d3;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -343,22 +375,27 @@
                 int maxAgregar = Cantidad + Obj.getStock();
 
                 tablaProductos += "<tr>";
-                    tablaProductos += "<td><img src='img/" + Obj.getImagen() + "' width='100' height='100' alt='Producto'></td>";
-                    tablaProductos += "<td style='text-align: left; vertical-align: middle;'><span style='font-weight: bold;font-size: 12px;'>" + Obj.getMarca() + "</span><br><span style='font-size: 17px;'>" + Obj.getDescripcion() + "</span></td>";
-                    tablaProductos += "<td style='text-align: left; vertical-align: middle; font-size: 17px;'> S/" + String.format("%.2f", Precio) + "</td>";
-                    tablaProductos += "<td style='text-align: left; vertical-align: middle; font-size: 17px;'><input type='number' name='nuevoStock_" + Obj.getIdProducto() + "' value='" + Cantidad + "' min='1' max='" + maxAgregar + "' style='border: none; outline: none;' oninput='actualizarSubtotal(\"" + Obj.getIdProducto() + "\", this.value, " + Precio + "); actualizarCarrito(\"" + Obj.getIdProducto() + "\", this.value)'></td>";
+                tablaProductos += "<td><img src='img/" + Obj.getImagen() + "' width='100' height='100' alt='Producto'></td>";
+                tablaProductos += "<td style='text-align: left; vertical-align: middle;'><span style='font-weight: bold;font-size: 12px;'>" + Obj.getMarca() + "</span><br><span style='font-size: 17px;'>" + Obj.getDescripcion() + "</span></td>";
+                tablaProductos += "<td style='text-align: left; vertical-align: middle; font-size: 17px;'> S/" + String.format("%.2f", Precio) + "</td>";
 
-                    // Aquí se ajusta el formato a dos decimales
-                    tablaProductos += "<td style='text-align: left; vertical-align: middle; font-size: 17px;' id='subtotal_" + Obj.getIdProducto() + "'>S/" + String.format("%.2f", SubTotal) + "</td>";
-                    // Modificación aquí para usar el icono de eliminar en lugar de texto
-                    tablaProductos += "<td style='text-align: center; vertical-align: middle;'><a href='" + enlace + "' class='delete-icon' title='Eliminar'><i class='fas fa-trash'></i></a></td>";
-                tablaProductos += "</tr>";
-            	
-            }else{
-            	System.out.println("Producto no encontrado: " + Lista.get(i).getIdProducto());
-            }
-            
+                // Contenedor de cantidad con botones + y -
+                tablaProductos += "<td style='text-align: left; vertical-align: middle; font-size: 17px;'>";
+                tablaProductos += "<div class='quantity-container'>";
+                tablaProductos += "<button type='button' class='quantity-button' onclick='cambiarCantidad(\"" + Obj.getIdProducto() + "\", -1, " + Precio + ", " + maxAgregar + ")'>-</button>";
+                tablaProductos += "<input type='text' class='quantity-input' id='cantidad_" + Obj.getIdProducto() + "' value='" + Cantidad + "' readonly data-max='" + maxAgregar + "'>";
+                tablaProductos += "<button type='button' class='quantity-button' onclick='cambiarCantidad(\"" + Obj.getIdProducto() + "\", 1, " + Precio + ", " + maxAgregar + ")'>+</button>";
+                tablaProductos += "</div>";
+                tablaProductos += "</td>";
+
+                // Subtotal y opciones de eliminación
+                tablaProductos += "<td style='text-align: left; vertical-align: middle; font-size: 17px;' id='subtotal_" + Obj.getIdProducto() + "'>S/" + String.format("%.2f", SubTotal) + "</td>";
+                tablaProductos += "<td style='text-align: center; vertical-align: middle;'><a href='" + enlace + "' class='delete-icon' title='Eliminar'><i class='fas fa-trash'></i></a></td>";
+            tablaProductos += "</tr>";
+        } else {
+            System.out.println("Producto no encontrado: " + Lista.get(i).getIdProducto());
         }
+    }
      
         tablaProductos += "</table>";
         tablaProductos += "</form>"; // Cierra el formulario
@@ -558,56 +595,75 @@
 </script>
 
 	<script>
-	function actualizarSubtotal(idProducto, cantidad, precio) {
-	    var nuevoSubtotal = cantidad * precio;
-	    document.getElementById('subtotal_' + idProducto).innerText = 'S/' + nuevoSubtotal.toFixed(2);
-	    actualizarTotal();
-	    actualizarContador(); // Actualizar el contador de productos
-	}
+	function cambiarCantidad(idProducto, cambio, precio, maxAgregar) {
+	    var cantidadInput = document.getElementById('cantidad_' + idProducto);
+	    var cantidadActual = parseInt(cantidadInput.value, 10);
+	    var nuevaCantidad = cantidadActual + cambio;
 
-	function actualizarTotal() {
-	    var total = 0;
-	    var subtotales = document.querySelectorAll('[id^="subtotal_"]');
-	    subtotales.forEach(function(subtotal) {
-	        var valorSubtotal = parseFloat(subtotal.innerText.replace('S/', '').trim());
-	        total += valorSubtotal;
-	    });
-	    document.getElementById('totalTotal').innerText = 'S/' + total.toFixed(2);
-	}
+	    // Validar que la nueva cantidad no exceda el límite dinámico de maxAgregar
+	    if (nuevaCantidad > maxAgregar) {
+	        alert("El valor debe ser menor o igual a la cantidad maxima disponible: " + maxAgregar);
+	        nuevaCantidad = maxAgregar;
+	    } else if (nuevaCantidad < 1) {
+	        nuevaCantidad = 1;
+	    }
 
-	function actualizarContador() {
-	    var totalCantidadProductos = 0;
-	    var inputsCantidad = document.querySelectorAll('input[name^="nuevoStock_"]');
-	    inputsCantidad.forEach(function(input) {
-	        totalCantidadProductos += parseInt(input.value, 10);
-	    });
-	    document.querySelector('.fas.fa-shopping-cart + span').innerText = '(' + totalCantidadProductos + ')';
+	    // Actualizar el valor del input y el subtotal
+	    cantidadInput.value = nuevaCantidad;
+	    actualizarSubtotal(idProducto, nuevaCantidad, precio);
+	    actualizarCarrito(idProducto, nuevaCantidad);
 	}
 	
-	function actualizarCarrito(idProducto, nuevaCantidad) {
-	    // Crear un formulario temporal para enviar la solicitud
-	    var form = document.createElement('form');
-	    form.method = 'POST';
-	    form.action = 'actualizarCarrito.jsp';
 
-	    var inputId = document.createElement('input');
-	    inputId.type = 'hidden';
-	    inputId.name = 'productoId';
-	    inputId.value = idProducto;
-	    form.appendChild(inputId);
+    function actualizarSubtotal(idProducto, cantidad, precio) {
+        var nuevoSubtotal = cantidad * precio;
+        document.getElementById('subtotal_' + idProducto).innerText = 'S/' + nuevoSubtotal.toFixed(2);
+        actualizarTotal();
+        actualizarContador();
+    }
 
-	    var inputCantidad = document.createElement('input');
-	    inputCantidad.type = 'hidden';
-	    inputCantidad.name = 'nuevaCantidad';
-	    inputCantidad.value = nuevaCantidad;
-	    form.appendChild(inputCantidad);
+    function actualizarTotal() {
+        var total = 0;
+        var subtotales = document.querySelectorAll('[id^="subtotal_"]');
+        subtotales.forEach(function(subtotal) {
+            var valorSubtotal = parseFloat(subtotal.innerText.replace('S/', '').trim());
+            total += valorSubtotal;
+        });
+        document.getElementById('totalTotal').innerText = 'S/' + total.toFixed(2);
+    }
 
-	    document.body.appendChild(form);
-	    form.submit();
-	}
+    function actualizarContador() {
+        var totalCantidadProductos = 0;
+        var inputsCantidad = document.querySelectorAll('.quantity-input');
+        inputsCantidad.forEach(function(input) {
+            totalCantidadProductos += parseInt(input.value, 10);
+        });
+        document.querySelector('.fas.fa-shopping-cart + span').innerText = '(' + totalCantidadProductos + ')';
+    }
 
+    function actualizarCarrito(idProducto, nuevaCantidad) {
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'actualizarCarrito.jsp';
 
-	</script>
+        var inputId = document.createElement('input');
+        inputId.type = 'hidden';
+        inputId.name = 'productoId';
+        inputId.value = idProducto;
+        form.appendChild(inputId);
+
+        var inputCantidad = document.createElement('input');
+        inputCantidad.type = 'hidden';
+        inputCantidad.name = 'nuevaCantidad';
+        inputCantidad.value = nuevaCantidad;
+        form.appendChild(inputCantidad);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
+	
+
 
 </body>
 </html>
