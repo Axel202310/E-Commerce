@@ -265,7 +265,7 @@
     <i class="fas fa-arrow-left" style="font-size: 18px; color: grey;margin-top: 25px; margin-left: 35px;"></i>     
     <a href="index.jsp" class="btn-no-fill" style="font-size: 20px;">EcomStore</a> 
     <i class="fas fa-chevron-left" style="font-size: 12px; color: grey;"></i>
-    <a href="verproductos.jsp?idCat=<%= ObjP.getIdCategoria() %>" class="btn-no-fill" style="font-size: 20px;"><%= ObjBD.getCategoriaById(ObjP.getIdCategoria()).getDescripcion() %></a>
+    <a href="verproductos.jsp?id=<%= ObjP.getIdCategoria() %>" class="btn-no-fill" style="font-size: 20px;"><%= ObjBD.getCategoriaById(ObjP.getIdCategoria()).getDescripcion() %></a>
     <i class="fas fa-chevron-left" style="font-size: 12px; color: grey;"></i>
     <a class="btn-no-fill" style="font-size: 20px;"><%= ObjP.getDescripcion() %></a>
     </div>

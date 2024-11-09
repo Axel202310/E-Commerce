@@ -18,7 +18,7 @@ public class CarritoBD {
 	private String Driver = "com.mysql.cj.jdbc.Driver";
 	private String URL = "jdbc:mysql://localhost:3306/EcomStore";
 	private String Usuario = "root";
-	private String Password = "yisusernaque77";
+	private String Password = "root";
 	
 	private Connection Cn;
 	private Statement Cmd;
