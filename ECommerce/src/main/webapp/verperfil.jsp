@@ -67,6 +67,11 @@
             margin: 20px auto;
             max-width: 800px;
         }
+        
+        .profile-info .text-center i {
+    color: #6c757d;
+}
+        
         .edit-button {
             background-color: #dc3545;
             color: white;
@@ -111,7 +116,7 @@
         <!-- Contenedor para el mensaje de error -->
          <div id="error-container" style="display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); width: 50%; text-align: center; z-index: 1000;">
            <p id="error-message" style="color: black; background-color: white; font-size: 12px; margin: 0; padding: 5px; border: 1px solid black; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); position: relative; display: inline-block;">
-           <span id="error-title" style="font-size: 16px;">Búsqueda vacía</span>
+           <span id="error-title" style="font-size: 16px;">BÃºsqueda vacÃ­a</span>
            <br>
            <span id="error-details">INGRESA LA MARCA,PRODUCTO DE LO QUE QUIERES BUSCAR</span>
            <span id="close-error" style="position: absolute; top: 5px; right: 10px; cursor: pointer; font-weight: bold;">&times;</span>
@@ -128,7 +133,7 @@
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             <li><a class="dropdown-item" href="verperfil.jsp">Mi perfil</a></li>
-            <li><a class="dropdown-item" href="cerrarsesion.jsp">Cerrar Sesión</a></li>
+            <li><a class="dropdown-item" href="cerrarsesion.jsp">Cerrar SesiÃ³n</a></li>
         </ul>
         <% } else { %>
         <button class="btn btn-simple" type="button" id="dropdownMenuButton" aria-expanded="false" style="border: none; outline: none; box-shadow: none; font-weight: bold; font-size: 18px;">
@@ -136,8 +141,8 @@
             <i class="fas fa-chevron-down" style="margin-left: 10px; color: #6c757d;"></i>
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li><a class="dropdown-item" href="login.jsp">Iniciar Sesión</a></li>
-            <li><a class="dropdown-item" href="registro.jsp">Regístrate</a></li>
+            <li><a class="dropdown-item" href="login.jsp">Iniciar SesiÃ³n</a></li>
+            <li><a class="dropdown-item" href="registro.jsp">RegÃ­strate</a></li>
         </ul>
         <% } %>
     </div>
@@ -146,9 +151,9 @@
         <span id="articulos-cantidad" style="color: black;">(<%= session.getAttribute("numarticulos") %>)</span>
     </a>
     
-    <!-- Contenedor para el mensaje de alerta con triángulo -->
+    <!-- Contenedor para el mensaje de alerta con triÃ¡ngulo -->
 <div id="mensaje-carrito" style="display: none; position: absolute; top: 60px; left: 90%; transform: translateX(-50%); background-color: white; padding: 10px; z-index: 1000; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);">
-    <!-- Triángulo en la parte superior -->
+    <!-- TriÃ¡ngulo en la parte superior -->
     <div style="position: absolute; top: -10px; left: 80%; transform: translateX(-50%); width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent; border-bottom: 10px solid white;"></div>
     <!-- Mensaje de alerta -->
     <p style="color: black; margin: 0; font-size: 12px;">No hay productos en el carrito.</p>
@@ -158,6 +163,13 @@
 
 <div class="profile-info">
     <h2 class="centered-title">Mi Perfil</h2>
+    <!-- Imagen circular con icono de usuario -->
+    <div class="text-center mb-4">
+        <div style="width: 120px; height: 120px; border-radius: 50%; background-color: #e0e0e0; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <i class="fas fa-user" style="font-size: 60px; color: #6c757d;"></i>
+        </div>
+    </div>
+
     <%
         try {
             Usuarios usuario = (Usuarios) session.getAttribute("cliente");
@@ -166,17 +178,21 @@
                 Usuarios usuarioInfo = carritoBD.InfoUsuario(usuario.getIdUsuario());
                 if (usuarioInfo != null) {
     %>
-    <p><strong>Nombre:</strong> <%= usuarioInfo.getNombres() %> <%= usuarioInfo.getApellidos() %></p>
-    <p><strong>Dirección:</strong> <%= usuarioInfo.getDireccion() %></p>
-    <p><strong>Fecha de Nacimiento:</strong> <%= usuarioInfo.getFechaNacimiento() %></p>
-    <p><strong>Sexo:</strong> <%= usuarioInfo.getSexo() %></p>
-    <p><strong>Correo Electrónico:</strong> <%= usuarioInfo.getCorreo() %></p>
+    <!-- InformaciÃ³n del usuario con iconos -->
+<div class="text-center">
+    <p><i class="fas fa-user" style="margin-right: 8px; color: #6c757d;"></i><strong>Nombre:</strong> <%= usuarioInfo.getNombres() %> <%= usuarioInfo.getApellidos() %></p>
+    <p><i class="fas fa-envelope" style="margin-right: 8px; color: #6c757d;"></i><strong>Correo ElectrÃ³nico:</strong> <%= usuarioInfo.getCorreo() %></p>
+    <p><i class="fas fa-venus-mars" style="margin-right: 8px; color: #6c757d;"></i><strong>Sexo:</strong> <%= usuarioInfo.getSexo() %></p>
+    <p><i class="fas fa-map-marker-alt" style="margin-right: 8px; color: #6c757d;"></i><strong>DirecciÃ³n:</strong> <%= usuarioInfo.getDireccion() %></p>
+    <p><i class="fas fa-calendar-alt" style="margin-right: 8px; color: #6c757d;"></i><strong>Fecha de Nacimiento:</strong> <%= usuarioInfo.getFechaNacimiento() %></p>
+</div>
+    
     <a href="actualizarPerfil.jsp" class="edit-button" style="float: right;">
         <i class="fas fa-edit"></i> Editar Perfil
     </a>
     <%
                 } else {
-                    out.println("<p class='text-danger'>No se encontró información del usuario.</p>");
+                    out.println("<p class='text-danger'>No se encontrÃ³ informaciÃ³n del usuario.</p>");
                 }
             } else {
                 response.sendRedirect("login.jsp");
@@ -187,19 +203,20 @@
     %>
 </div>
 
+
 <!-- FOOTER -->
 <footer>
     <div class="container">
         <div class="row">
             <div class="col-12 mb-3">
-                <p style="margin: 0;">© 2024 EcomStore. Todos los derechos reservados.</p>
+                <p style="margin: 0;">Â© 2024 EcomStore. Todos los derechos reservados.</p>
             </div>
             <div class="col-12">
                 <ul style="list-style: none; padding: 0; margin: 0; font-size: 14px;">
                     <li><a href="https://wa.me/51985042747" target="_blank" style="text-decoration: none; color: #007bff;">Contacto</a></li>
                     <li><a href="sobre-nosotros.jsp" style="text-decoration: none; color: #007bff;">Sobre Nosotros</a></li>
-                    <li><a href="politica-privacidad.jsp" style="text-decoration: none; color: #007bff;">Política de Privacidad</a></li>
-                    <li><a href="terminos-condiciones.jsp" style="text-decoration: none; color: #007bff;">Términos y Condiciones</a></li>
+                    <li><a href="politica-privacidad.jsp" style="text-decoration: none; color: #007bff;">PolÃ­tica de Privacidad</a></li>
+                    <li><a href="terminos-condiciones.jsp" style="text-decoration: none; color: #007bff;">TÃ©rminos y Condiciones</a></li>
                 </ul>
             </div>
             <div class="col-12 mt-3">
@@ -229,7 +246,7 @@
             dropdownMenu.classList.toggle('show');
         });
         
-        // Opcional: cerrar el menú si se hace clic fuera de él
+        // Opcional: cerrar el menÃº si se hace clic fuera de Ã©l
         document.addEventListener('click', function (event) {
             if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
                 dropdownMenu.classList.remove('show');
@@ -247,20 +264,20 @@
         if (query.trim() === '') {
             errorMessage.style.display = 'block'; // Muestra el mensaje de error
             errorContainer.style.display = 'block'; // Asegura que el contenedor del mensaje sea visible
-            return false; // Previene el envío del formulario si hay un error
+            return false; // Previene el envÃ­o del formulario si hay un error
         }
         errorMessage.style.display = 'none'; // Oculta el mensaje de error si el campo tiene texto
         errorContainer.style.display = 'none'; // Oculta el contenedor del mensaje
-        return true; // Permite el envío del formulario si no hay errores
+        return true; // Permite el envÃ­o del formulario si no hay errores
     }
 
-    // Función para cerrar el mensaje de error
+    // FunciÃ³n para cerrar el mensaje de error
     document.getElementById('close-error').addEventListener('click', function() {
         var errorContainer = document.getElementById('error-container');
         errorContainer.style.display = 'none'; // Oculta el contenedor del mensaje
     });
 
-    // Función para ocultar el mensaje de error al hacer clic en el campo de búsqueda
+    // FunciÃ³n para ocultar el mensaje de error al hacer clic en el campo de bÃºsqueda
     document.getElementById('searchInput').addEventListener('focus', function() {
         var errorContainer = document.getElementById('error-container');
         errorContainer.style.display = 'none'; // Oculta el contenedor del mensaje
@@ -272,10 +289,10 @@
 <!-- JavaScript para manejar el clic y mostrar el mensaje -->
 <script>
     document.getElementById('carrito-icono').addEventListener('click', function (event) {
-        // Obtener la cantidad de artículos del carrito
+        // Obtener la cantidad de artÃ­culos del carrito
         const nroarticulos = parseInt(document.getElementById('articulos-cantidad').textContent.replace(/[()]/g, ''));
 
-        // Verificar si el número de artículos es 0
+        // Verificar si el nÃºmero de artÃ­culos es 0
         if (nroarticulos === 0) {
             event.preventDefault(); // Evita redirigir a "carrito.jsp"
 
