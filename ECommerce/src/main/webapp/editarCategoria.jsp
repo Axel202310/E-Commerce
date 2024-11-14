@@ -153,15 +153,18 @@
                 <input type="text" class="form-control mb-2" id="imagenURL" name="imagenURL" placeholder="Ingresar URL de la imagen" value="<%= categoria.getImagen() %>">
                 <input type="file" class="form-control" id="imagenFile" name="imagenFile" accept="image/*" onchange="actualizarCampoImagen(this)">
                 <small class="form-text text-muted">Puedes ingresar una URL o seleccionar una imagen desde tu dispositivo. La imagen seleccionada sobrescribirá la URL.</small>
+                
             </div>
 
-            <div class="mb-3">
-                <label for="estado" class="form-label">Estado</label>
-                <select class="form-select" id="estado" name="estado" required>
-                    <option value="1" <%= categoria.getEstado() == '1' ? "selected" : "" %>>Activo</option>
-                    <option value="0" <%= categoria.getEstado() == '0' ? "selected" : "" %>>Inactivo</option>
-                </select>
-            </div>
+          <div class="mb-3">
+           <label for="estado" class="form-label">Estado</label>
+           <select class="form-select" id="estado" name="estado" required>
+               <option value="">Seleccionar estado...</option>
+               <option value="1">Activo</option>
+               <option value="0">Inactivo</option>
+           </select>
+           <div class="invalid-feedback">El estado es requerido.</div>
+       </div>
 
             <button type="submit" class="btn btn-primary">Actualizar Categoría</button>
             <a href="gestionCategoria.jsp" class="btn btn-secondary">Cancelar</a>
@@ -184,7 +187,7 @@
                 if (filePart != null && filePart.getSize() > 0) {
                     String contentDisposition = filePart.getHeader("content-disposition");
                     String fileName = contentDisposition.substring(contentDisposition.indexOf("filename=") + 10, contentDisposition.length() - 1);
-                    String imagePath = "uploads/" + fileName;
+                    String imagePath = "" + fileName;
                     imagen = imagePath;
 
                     File uploads = new File(application.getRealPath("/") + "uploads");
@@ -225,5 +228,165 @@
         }
     }
 </script>
+
+
+<script>
+// Validación para el campo de descripción
+const descripcionInput = document.getElementById('descripcion');
+
+descripcionInput.addEventListener('input', function(event) {
+    const descripcion = event.target.value;
+    descripcionInput.setCustomValidity("");
+
+    // Validar descripción vacía
+    if (descripcion.trim() === "") {
+        descripcionInput.setCustomValidity('Error: Falta rellenar el campo.');
+    } 
+    // Validar descripción con solo números
+    else if (/^\d+$/.test(descripcion)) {
+        descripcionInput.setCustomValidity('Error: Descripción no puede contener solo números.');
+    }
+    // Validar descripción con solo caracteres especiales
+    else if (/^[!\"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]+$/.test(descripcion)) {
+        descripcionInput.setCustomValidity('Error: Descripción no puede contener solo caracteres especiales.');
+    }
+    // Validar que no comience con un número o carácter especial
+    else if (/^[\d!\"#$%&'()*+,\-./:;<=>?@[\\\]^_`{|}~]/.test(descripcion)) {
+        descripcionInput.setCustomValidity('Error: La descripción no puede comenzar con un número o un carácter especial.');
+    }
+    // Validar si contiene tanto números como letras
+    else if (/\d/.test(descripcion) && /[a-zA-Z]/.test(descripcion)) {
+        descripcionInput.setCustomValidity('Error: No se permite números en la descripción.');
+    }
+    // Validar longitud mínima
+    else if (descripcion.length < 2) {
+        descripcionInput.setCustomValidity('Error: Longitud mínima de 2 y máximo de 12 caracteres.');
+    }
+    // Validar longitud máxima
+    else if (descripcion.length > 12) {
+        descripcionInput.setCustomValidity('Error: Longitud mínima de 2 y máximo de 12 caracteres.');
+    }
+    // Validar caracteres especiales no permitidos
+    else if (/[{}[\]@#$%^&*<>]/.test(descripcion)) { 
+        descripcionInput.setCustomValidity('Error: La descripción tiene caracteres especiales no permitidos');
+    }
+
+    descripcionInput.reportValidity();
+});
+</script>
+
+
+<script>
+    const imagenInput = document.getElementById('imagen');
+    const stockInput = document.getElementById('stock');
+    const form = document.querySelector('form');
+
+    // Validación de imagen
+    imagenInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        imagenInput.setCustomValidity("");
+
+        if (file) {
+            const fileName = file.name.toLowerCase();
+            
+            // Validación del formato y del tamaño del nombre de archivo
+            if (!fileName.endsWith('.jpg') && !fileName.endsWith('.jpeg') && !fileName.endsWith('.png')) {
+                imagenInput.setCustomValidity('Solo se permite formato .jpg, .jpeg o .png');
+            } else if (fileName.length < 6 || fileName.length > 50) {
+                imagenInput.setCustomValidity('El nombre de la imagen debe tener entre 6 y 50 caracteres.');
+            } else {
+                imagenInput.setCustomValidity("");
+            }
+        } else {
+            imagenInput.setCustomValidity('Falta rellenar el campo.');
+        }
+
+        imagenInput.reportValidity();
+    });
+
+
+    form.addEventListener('submit', function(event) {
+        const file = imagenInput.files[0];
+        const stockValue = stockInput.value.trim(); // Eliminar espacios en blanco
+        const parsedStockValue = parseInt(stockValue); // Convertir a número entero
+
+        // Validación de imagen al enviar el formulario
+        if (!file) {
+            event.preventDefault();
+            imagenInput.setCustomValidity('Falta rellenar el campo.');
+            imagenInput.reportValidity();
+        } else if (!file.name.toLowerCase().endsWith('.jpg') && !file.name.toLowerCase().endsWith('.jpeg') && !file.name.toLowerCase().endsWith('.png')) {
+            event.preventDefault();
+            imagenInput.setCustomValidity('Solo se permite formato .jpg, .jpeg o .png');
+            imagenInput.reportValidity();
+        } else if (file.name.length < 6 || file.name.length > 50) {
+            event.preventDefault();
+            imagenInput.setCustomValidity('El nombre de la imagen debe tener entre 6 y 50 caracteres.');
+            imagenInput.reportValidity();
+        }
+
+        
+    });
+</script>
+
+
+<script>
+    document.getElementById('estado').addEventListener('change', function() {
+        if (this.value === "") {
+            this.setCustomValidity("Por favor, selecciona un estado.");
+        } else {
+            this.setCustomValidity("");
+        }
+    });
+</script>
+<script>
+    function toggleSubMenu(id) {
+        var subMenu = document.getElementById(id);
+        if (subMenu.style.display === "none" || subMenu.style.display === "") {
+            subMenu.style.display = "block";
+        } else {
+            subMenu.style.display = "none";
+        }
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const imagenFileInput = document.getElementById('imagenFile');
+        const imagenURLInput = document.getElementById('imagenURL');
+        const form = document.querySelector('form');
+
+        // Función para validar el campo de imagen
+        function validateImageInput() {
+            const file = imagenFileInput.files[0];
+            const fileName = file ? file.name.toLowerCase() : '';
+
+            // Verificar que exista un archivo o URL
+            if (!file && imagenURLInput.value.trim() === "") {
+                imagenFileInput.setCustomValidity('Falta rellenar el campo. Selecciona un archivo o ingresa una URL.');
+            }
+            // Verificar que el archivo tenga una extensión válida
+            else if (file && !fileName.endsWith('.jpg') && !fileName.endsWith('.jpeg') && !fileName.endsWith('.png')) {
+                imagenFileInput.setCustomValidity('Solo se permite formato .jpg, .jpeg o .png');
+            } else {
+                imagenFileInput.setCustomValidity('');
+            }
+            imagenFileInput.reportValidity();
+        }
+
+        // Validar imagen en el evento de cambio y al enviar el formulario
+        imagenFileInput.addEventListener('change', validateImageInput);
+        imagenURLInput.addEventListener('input', validateImageInput);
+
+        form.addEventListener('submit', function(event) {
+            validateImageInput(); // Llamar a la validación al enviar el formulario
+            if (!form.checkValidity()) {
+                event.preventDefault(); // Prevenir el envío si hay errores
+            }
+        });
+    });
+</script>
+
+
+
 </body>
 </html>
