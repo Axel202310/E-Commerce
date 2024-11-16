@@ -16,28 +16,28 @@ import modelo.*;
 public class CarritoBD {
 	// Campos o atributos
 	private String Driver = "com.mysql.cj.jdbc.Driver";
-	private String URL = "jdbc:mysql://localhost:3306/EcomStore";
-	private String Usuario = "root";
-	private String Password = "root";
-	
+	private String URL = "jdbc:mysql://" + System.getenv("DB_HOST") + ":" + System.getenv("DB_PORT") + "/" + System.getenv("DB_NAME") + "?useSSL=false&connectTimeout=30000&socketTimeout=30000";
+	private String Usuario = System.getenv("DB_USER");
+	private String Password = System.getenv("DB_PASSWORD");
+
 	private Connection Cn;
 	private Statement Cmd;
 	private CallableStatement Stmt;
 	private ResultSet Rs;
-	
+
 	private List<Categorias> ListaC;
 	private List<Productos> ListaP;
-	
+
 	// Método Constructor
 	public CarritoBD() {
-		try {
-				Class.forName(Driver);
-				Cn = DriverManager.getConnection(URL, Usuario, Password);
-		} catch (Exception e) {
-				System.out.println("ERROR EN LA CONEXION:" + e.getMessage());
-		}
+	    try {
+	        Class.forName(Driver);
+	        Cn = DriverManager.getConnection(URL, Usuario, Password);
+	    } catch (Exception e) {
+	        System.out.println("ERROR EN LA CONEXION: " + e.getMessage());
+	    }
 	}
-	
+
 	// Método ListarCategorias
 	public List<Categorias> ListarCategorias(){
 		String SQL = "CALL ListarCategorias()";
