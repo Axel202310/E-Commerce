@@ -1,0 +1,17 @@
+*.class
+*.log
+target/
+build/
+.idea/
+.vscode/
+.settings/
+*.iml
+.git/
+node_modules/
+.DS_Store
+Thumbs.db
+*.jar
+*.war
+*.ear
+tmp/
+logs/
